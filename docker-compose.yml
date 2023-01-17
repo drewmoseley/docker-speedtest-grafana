@@ -12,16 +12,15 @@ services:
       - "INFLUXDB_ADMIN_USER=admin"
       - "INFLUXDB_ADMIN_PASSWORD=password"
       - "INFLUXDB_DB=speedtest"
-
   grafana:
     restart: always
     image: grafana/grafana:6.7.2
     volumes:
       - "${HOME}/local/docker-volumes/docker-speedtest-grafana/provisioning:/etc/grafana/provisioning"
-    ports:
-      - "${GRAFANA_PORT}:3000"
+      - ./grafana.ini:/etc/grafana/grafana.ini
     environment:
-      - "GF_SERVER_ROOT_URL=http://localhost"
+      - "GF_SERVER_ROOT_URL=https://vhost.lab.moseleynet.net/speedtest/"
+      - "GF_SERVER_DOMAIN=http://vhost.lab.moseleynet.net"
       - "GF_SECURITY_ADMIN_PASSWORD=admin"
       - "GF_AUTH_ANONYMOUS_ENABLED=true"
     depends_on:
@@ -36,3 +35,8 @@ services:
       - "SPEEDTEST_HOST=${SPEEDTEST_HOST}"
     depends_on:
       - influxdb
+
+networks:
+  default:
+    external: true
+    name: lsio
